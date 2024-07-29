@@ -2,6 +2,7 @@ package com.sumerge.quizApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class QuizApplication {
     private User user;
@@ -53,15 +54,25 @@ public class QuizApplication {
         }
 
         String quizTitle = userInterface.getUserInput("Enter the title of the quiz you want to take: \n" + quizManager.getAllQuizzesTitles());
+
+        if(quizTitle.isEmpty()) {
+            userInterface.displayMessage("Invalid input.");
+            return;
+        }
+
         Quiz quiz = quizManager.getQuiz(quizTitle);
+
         if (quiz == null) {
             userInterface.displayMessage("Quiz not found.");
             return;
         }
 
+        List<Question> randomizedQuestions = new ArrayList<>(quiz.getQuestions());
+        Collections.shuffle(randomizedQuestions);
+
         List<Response> responses = new ArrayList<>();
         userInterface.displayMessage("Starting the quiz...");
-        for (Question question : quiz.getQuestions()) {
+        for (Question question : randomizedQuestions) {
             userInterface.displayQuestion(question);
 
             int userAnswerIndex = -1;
